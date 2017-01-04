@@ -1,4 +1,10 @@
 {
 	"home": "secret",
-	"login": "secret"
+	"loginPath": "secret",
+	"hostname": "secret",
+	"bookPath": "secret",
+	"organizationIdentifierName": "secret",
+	"organizationIdentifierValue": "secret",
+	"username1": "secret",
+	"password1": "secret"
 }
