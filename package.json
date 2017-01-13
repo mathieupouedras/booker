@@ -10,6 +10,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "cookie": "^0.3.1",
     "form-data": "^2.1.2"
   }
 }

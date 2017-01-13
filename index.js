@@ -1,44 +1,36 @@
 const fs = require('fs')
-const https = require('https')
+const Services = require('./services.js')
 const FormData = require('form-data')
 
-function login(parameters) {
+try {
+  const data = fs.readFileSync('application.json', 'UTF-8')
+  const parameters  = JSON.parse(data)
+
+  const options = {}
+  options.hostname = parameters.hostname
+  options.path = parameters.homePath
+  options.method = 'GET'
+
   const form = new FormData()
   form.append('username', parameters.username1)
   form.append('password', parameters.password1)
   form.append(parameters.organizationIdentifierName, parameters.organizationIdentifierValue)
 
-  const options = {
-  	hostname: parameters.hostname,
-  	path: parameters.loginPath,
-  	method: 'POST',
-  	headers: form.getHeaders()
-  }
+  Services.getResponseHeaders(options).then((headers) => {
+    let cookies = Services.getCookies(headers)
 
-  const request = https.request(options, (res) => {
-  	console.log(`statusCode: ${res.statusCode}`)
-  	// Lister les cookies et prendre celui que je veux
-  	console.log(res.headers['set-cookie'][1].split(';')[0].split('=')[1])
+    // login
+    options.path = parameters.loginPath
+    options.method = 'POST'
 
-  	res.on('data', (d) => {
-			process.stdout.write(d)
-  	})
-  })
+    Services.getResponseHeaders(options, form).then((headers) => {
+      console.log(cookies)
+      cookies = Services.getCookies(headers)
 
-  form.pipe(request)
+      console.log(cookies)      
+    })
 
-  request.on('error', (e) => {
-  	console.error(e)
-  })
-
-  request.end()
-}
-
-try {
-  const data = fs.readFileSync('application.json', 'UTF-8')
-  const jsonData  = JSON.parse(data)
-
-  login(jsonData)
+  }) 
 
 } catch(e) {
   console.log(`Error : ${e.stack}`)

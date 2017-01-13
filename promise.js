@@ -3,12 +3,17 @@ const https = require('https')
 const FormData = require('form-data')
 
 const getContent = function(parameters) {
-    const options = {
-      hostname: parameters.hostname,
-      path: parameters.loginPath,
-      method: 'GET',
-      //headers: form.getHeaders()
-    }
+  const form = new FormData()
+  form.append('username', parameters.username1)
+  form.append('password', parameters.password1)
+  form.append(parameters.organizationIdentifierName, parameters.organizationIdentifierValue)
+
+  const options = {
+    hostname: parameters.hostname,
+    path: parameters.loginPath,
+    method: 'POST',
+    headers: form.getHeaders()
+  }
 
   return new Promise((resolve, reject) => {
     const request = https.request(options, (response) => {
@@ -21,7 +26,7 @@ const getContent = function(parameters) {
       // on every content chunk, push it to the data array
       response.on('data', () => {});
       // we are done, resolve promise with those joined chunks
-      response.on('end', () => resolve(response.statusCode));
+      response.on('end', () => resolve(response.headers['set-cookie']));
     });
     // handle connection errors of the request
     request.on('error', (err) => reject(err))
