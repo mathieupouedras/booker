@@ -1,2 +1,2 @@
 # booker
-automate private bookigs
+automate private bookings
